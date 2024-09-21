@@ -1,0 +1,65 @@
+
+# Compiled object files, libraries, executables:
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+
+# C++ test binaries:
+*_test
+*_unittest
+*.gcda
+*.gcno
+
+# Bazel output files:
+bazel-*
+bazel-out/
+bazel-bin/
+bazel-testlogs/
+bazel-genfiles/
+bazel-out-local/
+
+# Build and intermediate files:
+build/
+dist/
+*.log
+*.tmp
+
+# IDE and editor files:
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# System files:
+.DS_Store
+Thumbs.db
+
+# Backup files:
+*~
+*.swp
+*.swo
+*.bak
+*.orig
+*.old
+
+# CMake or other build system:
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CMakeLists.txt.user
+CMakeUserPresets.json
+.cache/
+
+# Bazel-specific config
+.bazelrc.user
+.bazelignore
+
+# Other build or environment settings:
+.env
+
+# Obsidian notes
+docs/.obsidian/

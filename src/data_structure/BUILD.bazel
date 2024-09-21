@@ -1,0 +1,6 @@
+cc_library (
+  name = "data_structure",
+  srcs = glob(["*.hpp"]),
+  deps = ["//src/utils:utils", "//src/common:common"],
+  visibility = ["//visibility:public"],
+)

@@ -1,0 +1,6 @@
+load("//bazel_script:utils.bzl", "create_test_target")
+
+create_test_target(
+  srcs = ["centralized_threadpool_tests.cpp"],
+  deps = ["//src/threadpool:centralized_threadpool", "//src/utils:utils"]
+)

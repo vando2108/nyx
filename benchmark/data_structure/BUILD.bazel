@@ -1,0 +1,6 @@
+load("//bazel_script:utils.bzl", "create_benchmark_target")
+
+create_benchmark_target(
+  srcs = glob(["*.cpp"]),
+  deps = [],
+)
