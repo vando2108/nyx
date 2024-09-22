@@ -1,6 +1,0 @@
-cc_library (
-  name = "socket",
-  srcs = glob(["*.cpp"]),
-  hdrs = glob(["include/*.hpp"]),
-  deps = ["@com_github_google_glog//:glog", "//src/event:event"],
-)

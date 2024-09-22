@@ -1,5 +1,8 @@
+load("//bazel_script:create_tags.bzl", "create_tags")
+
 cc_library (
   name = "common",
   srcs = glob(["include/*.hpp"]),
+  tags = create_tags(),
   visibility = ["//visibility:public"],
 )

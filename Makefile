@@ -1,11 +1,11 @@
 # Makefile to build Bazel project, generate compile_commands.json, and run unit tests
 
 # Default Bazel build options
-BAZEL_BUILD_OPTS = --cxxopt=-std=c++20
-BAZEL_TESTS_OPTS = --cxxopt=-std=c++20 --test_output=streamed --color=yes
+BUILD_OPTS = --cxxopt=-std=c++20
+TESTS_OPTS = --cxxopt=-std=c++20 --test_output=streamed --color=yes
 
 # The target to build (can be overridden from the command line)
-TARGET ?= //benchmark/data_structure:scsp_mutex_queue_benchmark
+# TARGET ?= //benchmark/data_structure:scsp_mutex_queue_benchmark
 
 # The default goal is to build the specified target
 .PHONY: all
@@ -14,7 +14,12 @@ all: build
 # Build rule
 .PHONY: build
 build:
-	bazel build $(BAZEL_BUILD_OPTS) $(TARGET)
+	bazel build $(BUILD_OPTS) $(TARGET)
+
+# Build tags
+.PHONY: build_tags
+build_tags:
+	bazel build //... --build_tag_filters=$(TAGS) $(BUILD_OPTS)
 
 # Rule to generate compile_commands.json using Hedron Compile Commands
 .PHONY: compile_commands
@@ -29,7 +34,7 @@ clean:
 # Rule to run Bazel tests
 .PHONY: test
 test:
-	bazel test $(BAZEL_TESTS_OPTS) $(TARGET)
+	bazel test $(TESTS_OPTS) $(TARGET)
 
 # Help rule to display usage information
 .PHONY: help

@@ -1,8 +1,9 @@
 load("//bazel_script:create_tags.bzl", "create_tags")
 
 cc_library (
-  name = "http",
+  name = "kqueue",
   srcs = glob(["*.cpp"]),
-  tags = create_tags(),
   hdrs = glob(["include/*.hpp"]),
+  tags = create_tags(),
+  deps = ["//src/http/event:event", "@com_github_google_glog//:glog"]
 )
