@@ -2,8 +2,8 @@
 
 #include <future>
 
-#include "src/threadpool/include/base.hpp"
-#include "src/threadpool/include/centralized_threadpool.hpp"
+#include "src/http/threadpool/include/base.hpp"
+#include "src/http/threadpool/include/centralized_threadpool.hpp"
 #include "src/utils/include/rand.hpp"
 
 using nyx::threadpool::Config;
@@ -43,7 +43,7 @@ TEST(CentralizedThreadpoolTest, MultipleTaskExecution) {
 
 TEST(CentralizedThreadpoolTest, ConcurrentTaskExecution) {
   auto pool = CentralizedThreadpool::create(std::move(Config()));
-  auto data = nyx::utils::rand::rand_list_int(100, 1000);
+  auto data = nyx::utils::rand::rand_list(100, 1000);
   std::vector<std::future<int>> futures;
 
   for (int i = 0; i < data.size(); ++i) {

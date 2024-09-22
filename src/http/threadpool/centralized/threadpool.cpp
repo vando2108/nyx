@@ -3,7 +3,7 @@
 #include <mutex>
 #include <utility>
 
-#include "src/threadpool/include/centralized_threadpool.hpp"
+#include "src/http/threadpool/include/centralized_threadpool.hpp"
 
 namespace nyx {
 namespace threadpool {

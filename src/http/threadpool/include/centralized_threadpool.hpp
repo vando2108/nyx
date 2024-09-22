@@ -12,7 +12,7 @@
 #include <utility>
 
 #include "src/data_structure/scsp_lockfree_queue.hpp"
-#include "src/threadpool/include/base.hpp"
+#include "src/http/threadpool/include/base.hpp"
 
 namespace nyx {
 namespace threadpool {

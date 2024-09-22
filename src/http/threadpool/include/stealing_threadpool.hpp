@@ -1,9 +1,8 @@
 #include <future>
 #include <memory>
-#include <mutex>
 
-#include "data_structure/scsp_lockfree_queue.hpp"
-#include "threadpool/base.hpp"
+#include "src/data_structure/scsp_lockfree_queue.hpp"
+#include "src/http/threadpool/include/base.hpp"
 
 namespace nyx {
 namespace threadpool {

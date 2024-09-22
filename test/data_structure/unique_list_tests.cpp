@@ -14,7 +14,7 @@ TEST(UniqueListTest, PushPopOperations) {
 
   ASSERT_TRUE(unique_list.empty()) << "Expected unique_list to be empty initially.";
 
-  auto mock_data = nyx::utils::rand::rand_list_int(1000, 1000);
+  auto mock_data = nyx::utils::rand::rand_list(1000, 1000);
   for (auto it : mock_data) {
     unique_list.push_back(it);
   }
@@ -45,8 +45,8 @@ TEST(UniqueListTest, PushDuplicateOperation) {
 }
 
 TEST(UniqueListTest, PopRandom) {
-  auto mock_data = nyx::utils::rand::rand_list_int(10000, 10000);
-  UniqueList<int> unique_list(mock_data);
+  auto mock_data = nyx::utils::rand::rand_list(10000, 10000);
+  UniqueList<std::size_t> unique_list(mock_data);
 
   int rand_pos = nyx::utils::rand::Xorshift::next() % mock_data.size();
 
@@ -56,8 +56,8 @@ TEST(UniqueListTest, PopRandom) {
 }
 
 TEST(UniqueListTest, TryGetNode) {
-  auto mock_data = nyx::utils::rand::rand_list_int(10000, 10000);
-  UniqueList<int> unique_list(mock_data);
+  auto mock_data = nyx::utils::rand::rand_list(10000, 10000);
+  UniqueList<std::size_t> unique_list(mock_data);
 
   int rand_pos = nyx::utils::rand::Xorshift::next() % mock_data.size();
   auto it = unique_list.try_get_node(mock_data[rand_pos]);
@@ -65,8 +65,8 @@ TEST(UniqueListTest, TryGetNode) {
 }
 
 TEST(UniqueListTest, ReplaceOperation) {
-  auto mock_data = nyx::utils::rand::rand_list_int(10000, 10000);
-  UniqueList<int> unique_list(mock_data);
+  auto mock_data = nyx::utils::rand::rand_list(10000, 10000);
+  UniqueList<std::size_t> unique_list(mock_data);
 
   int value = mock_data[0];
   int replace_value = 10001;

@@ -1,7 +1,7 @@
 #include <memory>
 
-#include "src/threadpool/include/base.hpp"
-#include "src/threadpool/include/centralized_threadpool.hpp"
+#include "src/http/threadpool/include/base.hpp"
+#include "src/http/threadpool/include/centralized_threadpool.hpp"
 
 namespace nyx {
 namespace threadpool {
