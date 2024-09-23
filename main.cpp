@@ -1,4 +1,4 @@
-// #include <glog/logging.h>
+#include <glog/logging.h>
 #include <netinet/in.h>
 #include <sys/_endian.h>
 #include <sys/socket.h>
@@ -13,7 +13,7 @@
 #include <thread>
 #include <utility>
 
-#include "src/data_structure/unique_list.hpp"
+#include "src/data_structure/priority_queue.hpp"
 
 // #include "data_structure/stealing_work_queue.hpp"
 // #include "http/http_server.hpp"
@@ -32,10 +32,44 @@ bool lock_key;
 // }
 
 int main(int argc, char* argv[]) {
-  // google::InitGoogleLogging(argv[0]);
+  google::InitGoogleLogging(argv[0]);
 
   // Set log info to console
-  // FLAGS_alsologtostderr = 1;
+  FLAGS_alsologtostderr = 1;
+
+  nyx::data_structure::priority_queue<int> pq;
+  int x = 10;
+  pq.push_and_update(std::move(x), 0);
+  int y = 11;
+  pq.push_and_update(std::move(y), 0);
+  pq.remove(10);
+  auto temp = pq.try_pop();
+  if (temp.has_value()) {
+    LOG(INFO) << temp.value();
+  } else {
+    LOG(INFO) << "error";
+  }
+  temp = pq.try_pop();
+  if (temp.has_value()) {
+    LOG(INFO) << temp.value();
+  } else {
+    LOG(INFO) << "error";
+  }
+  temp = pq.try_pop();
+  if (temp.has_value()) {
+    LOG(INFO) << temp.value();
+  } else {
+    LOG(INFO) << "error";
+  }
+
+  auto z = 12;
+  pq.push_no_update(std::move(z), 63);
+
+  if (pq.get_priority(12).has_value()) {
+    LOG(INFO) << "priority: " << static_cast<int>(pq.get_priority(12).value());
+  } else {
+    LOG(INFO) << "pq error";
+  }
 
   // nyx::socket::ServerStream server = nyx::socket::ServerStream("127.0.0.1", 3000);
   // server.start();

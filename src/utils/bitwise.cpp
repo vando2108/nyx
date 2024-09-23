@@ -1,7 +1,7 @@
 #include "include/bitwise.hpp"
 
 namespace nyx::utils::bitwise {
-int clz(size_t x) noexcept {
+int clz(std::size_t x) noexcept {
   // clang-format off
   size_t y;
   int n = 64;
@@ -16,7 +16,7 @@ int clz(size_t x) noexcept {
   return n - x;
 }
 
-int ctz(size_t x) noexcept {
+int ctz(std::size_t x) noexcept {
   if (x == 0) {
     return 64;
   }
@@ -33,13 +33,17 @@ int ctz(size_t x) noexcept {
   return n - 1;
 }
 
-std::optional<int> lmb(size_t x) noexcept {
+std::optional<int> lmb(const std::size_t& x) noexcept {
   if (x == 0) {
     return std::nullopt;
   }
 
-  return 64 - clz(x);
+  return 64 - clz(x) - 1;
 }
 
-bool is_power_of_two(size_t x) noexcept { return (x & (x - 1)) == 0; }
+bool is_power_of_two(const std::size_t& x) noexcept { return x > 0 && (x & (x - 1)) == 0; }
+
+void turn_on_bit(std::size_t& x, const uint8_t& pos) noexcept { x |= 1LL << pos; }
+
+void turn_off_bit(std::size_t& x, const uint8_t& pos) noexcept { x &= ~(1LL << pos); }
 }  // namespace nyx::utils::bitwise
