@@ -1,8 +1,6 @@
 #ifndef DATA_STRUCTURE_PRIORITY_QUEUE_HPP
 #define DATA_STRUCTURE_PRIORITY_QUEUE_HPP
 
-#include <glog/logging.h>
-
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -61,8 +59,35 @@ void priority_queue<T>::push_no_update(T&& value, const uint8_t& priority) noexc
 
 template <typename T>
 void priority_queue<T>::push_and_update(T&& value, const uint8_t& priority) noexcept {
+  auto it = addr_map_.find(value);
+
+  // Value already exsits
+  if (it != addr_map_.end()) {
+    node_container& nc = it->second;
+    // Priority not changed
+    if (nc.priority == priority) {
+      return;
+    }
+
+    priorities_[nc.priority].erase(nc.node_addr);
+    if (priorities_[nc.priority].empty()) {
+      utils::bitwise::turn_off_bit(marker_, nc.priority);
+    }
+
+    nc.priority = priority;
+    if (priorities_[nc.priority].empty()) {
+      utils::bitwise::turn_on_bit(marker_, nc.priority);
+    }
+    priorities_[nc.priority].push_back(std::forward<T>(value));
+    nc.node_addr = std::prev(priorities_[nc.priority].end());
+
+    return;
+  }
+
+  // Value not exsits
   utils::bitwise::turn_on_bit(marker_, priority);
   auto& prio_list = priorities_[priority];
+
   prio_list.push_back(std::forward<T>(value));
   addr_map_.emplace(prio_list.back(), node_container(priority, std::prev(prio_list.end())));
 }
@@ -73,12 +98,14 @@ std::optional<T> priority_queue<T>::try_pop() noexcept {
     return std::nullopt;
   }
 
-  auto higest_priority = utils::bitwise::lmb(marker_).value();
-  auto ret = priorities_[higest_priority].front();
-  priorities_[higest_priority].pop_front();
+  const uint8_t higest_priority = utils::bitwise::lmb(marker_).value();
+  auto& prio_list = priorities_[higest_priority];
+  T ret = prio_list.front();
+  prio_list.pop_front();
+
   addr_map_.erase(ret);
 
-  if (priorities_[higest_priority].size() == 0) {
+  if (prio_list.empty()) {
     utils::bitwise::turn_off_bit(marker_, higest_priority);
   }
 

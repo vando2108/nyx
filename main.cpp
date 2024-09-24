@@ -39,37 +39,11 @@ int main(int argc, char* argv[]) {
 
   nyx::data_structure::priority_queue<int> pq;
   int x = 10;
-  pq.push_and_update(std::move(x), 0);
-  int y = 11;
-  pq.push_and_update(std::move(y), 0);
-  pq.remove(10);
-  auto temp = pq.try_pop();
-  if (temp.has_value()) {
-    LOG(INFO) << temp.value();
-  } else {
-    LOG(INFO) << "error";
-  }
-  temp = pq.try_pop();
-  if (temp.has_value()) {
-    LOG(INFO) << temp.value();
-  } else {
-    LOG(INFO) << "error";
-  }
-  temp = pq.try_pop();
-  if (temp.has_value()) {
-    LOG(INFO) << temp.value();
-  } else {
-    LOG(INFO) << "error";
-  }
-
-  auto z = 12;
-  pq.push_no_update(std::move(z), 63);
-
-  if (pq.get_priority(12).has_value()) {
-    LOG(INFO) << "priority: " << static_cast<int>(pq.get_priority(12).value());
-  } else {
-    LOG(INFO) << "pq error";
-  }
+  pq.push_and_update(std::move(x), 10);
+  x = 10;
+  pq.push_and_update(std::move(x), 9);
+  auto popped = pq.try_pop();
+  LOG(INFO) << static_cast<int>(popped.value());
 
   // nyx::socket::ServerStream server = nyx::socket::ServerStream("127.0.0.1", 3000);
   // server.start();
