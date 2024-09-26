@@ -22,7 +22,9 @@ def create_benchmark_target(srcs, deps):
       tags = create_tags(),
       deps = [
         "@google_benchmark//:benchmark",
+        "@com_github_google_glog//:glog",
         "//src/data_structure:data_structure",
+        "//src/utils:utils",
       ] + deps,
     )
 

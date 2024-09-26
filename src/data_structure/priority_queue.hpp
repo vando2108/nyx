@@ -17,15 +17,9 @@ namespace nyx::data_structure {
 template <typename T>
 class priority_queue {
   typedef typename std::list<T>::iterator node_addr_t;
+  typedef std::pair<uint8_t, node_addr_t> node_container_t;
 
-  struct node_container {
-    uint8_t priority;
-    node_addr_t node_addr;
-
-    node_container(uint8_t priority_, node_addr_t node_addr_) : priority(priority_), node_addr(node_addr_) {}
-  };
-
-  std::unordered_map<T, node_container> addr_map_;
+  std::unordered_map<T, node_container_t> addr_map_;
   std::array<std::list<T>, common::define::size_type_bits> priorities_;
 
  public:
@@ -37,11 +31,14 @@ class priority_queue {
 
  public:
   bool is_exsit(const T&) const noexcept;
+  const T& top() const noexcept;
   void push_no_update(T&&, const uint8_t&) noexcept;
   void push_and_update(T&&, const uint8_t&) noexcept;
   std::optional<T> try_pop() noexcept;
   void remove(const T&) noexcept;
   std::optional<uint8_t> get_priority(const T&) const noexcept;
+  void clear() noexcept;
+  size_t size() const noexcept;
 };
 
 template <typename T>
@@ -63,23 +60,23 @@ void priority_queue<T>::push_and_update(T&& value, const uint8_t& priority) noex
 
   // Value already exsits
   if (it != addr_map_.end()) {
-    node_container& nc = it->second;
+    node_container_t& nc = it->second;
     // Priority not changed
-    if (nc.priority == priority) {
+    if (nc.first == priority) {
       return;
     }
 
-    priorities_[nc.priority].erase(nc.node_addr);
-    if (priorities_[nc.priority].empty()) {
-      utils::bitwise::turn_off_bit(marker_, nc.priority);
+    priorities_[nc.first].erase(nc.second);
+    if (priorities_[nc.first].empty()) {
+      utils::bitwise::turn_off_bit(marker_, nc.first);
     }
 
-    nc.priority = priority;
-    if (priorities_[nc.priority].empty()) {
-      utils::bitwise::turn_on_bit(marker_, nc.priority);
+    nc.first = priority;
+    if (priorities_[nc.first].empty()) {
+      utils::bitwise::turn_on_bit(marker_, nc.first);
     }
-    priorities_[nc.priority].push_back(std::forward<T>(value));
-    nc.node_addr = std::prev(priorities_[nc.priority].end());
+    priorities_[nc.first].push_back(std::forward<T>(value));
+    nc.second = std::prev(priorities_[nc.first].end());
 
     return;
   }
@@ -89,7 +86,7 @@ void priority_queue<T>::push_and_update(T&& value, const uint8_t& priority) noex
   auto& prio_list = priorities_[priority];
 
   prio_list.push_back(std::forward<T>(value));
-  addr_map_.emplace(prio_list.back(), node_container(priority, std::prev(prio_list.end())));
+  addr_map_.emplace(prio_list.back(), std::make_pair(priority, std::prev(prio_list.end())));
 }
 
 template <typename T>
@@ -98,12 +95,13 @@ std::optional<T> priority_queue<T>::try_pop() noexcept {
     return std::nullopt;
   }
 
-  const uint8_t higest_priority = utils::bitwise::lmb(marker_).value();
+  // const uint8_t higest_priority = utils::bitwise::lmb(marker_).value();
+  const uint8_t higest_priority = 0;
   auto& prio_list = priorities_[higest_priority];
   T ret = prio_list.front();
   prio_list.pop_front();
 
-  addr_map_.erase(ret);
+  // addr_map_.erase(ret);
 
   if (prio_list.empty()) {
     utils::bitwise::turn_off_bit(marker_, higest_priority);
@@ -119,13 +117,13 @@ void priority_queue<T>::remove(const T& value) noexcept {
     return;
   }
 
-  const node_container& nc = it->second;
-  auto& prio_list = priorities_[nc.priority];
+  const node_container_t& nc = it->second;
+  auto& prio_list = priorities_[nc.first];
 
-  prio_list.erase(nc.node_addr);
+  prio_list.erase(nc.second);
 
   if (prio_list.empty()) {
-    utils::bitwise::turn_off_bit(marker_, nc.priority);
+    utils::bitwise::turn_off_bit(marker_, nc.first);
   }
 
   addr_map_.erase(it);
@@ -138,7 +136,21 @@ std::optional<uint8_t> priority_queue<T>::get_priority(const T& value) const noe
     return std::nullopt;
   }
 
-  return it->second.priority;
+  return it->second.first;
+}
+
+template <typename T>
+void priority_queue<T>::clear() noexcept {
+  addr_map_.clear();
+  for (auto& it : priorities_) {
+    it.clear();
+  }
+  marker_ = 0;
+}
+
+template <typename T>
+size_t priority_queue<T>::size() const noexcept {
+  return addr_map_.size();
 }
 }  // namespace nyx::data_structure
 

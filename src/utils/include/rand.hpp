@@ -20,7 +20,8 @@ class Xorshift {
   static std::size_t x_, y_, z_, w_;
 };
 
-std::vector<std::size_t> rand_list(size_t size, size_t element_size);
+std::vector<std::size_t> rand_list(size_t size, size_t element_size) noexcept;
+std::vector<std::pair<size_t, size_t>> rand_list_pair(size_t size, size_t first_limit, size_t second_limit) noexcept;
 }  // namespace nyx::utils::rand
 
 #endif  // !UTILS_RAND_HPP

@@ -1,10 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <array>
-#include <list>
-#include <optional>
-#include <unordered_map>
-
 #include "src/data_structure/priority_queue.hpp"
 
 namespace nyx::data_structure {
@@ -180,9 +175,9 @@ TEST_F(PriorityQueueTest, DuplicateElements) {
   auto popped = pq.try_pop();
   ASSERT_TRUE(popped.has_value());
   EXPECT_EQ(popped.value(), 5);
-  //
-  // // Queue should be empty after popping the only element
-  // EXPECT_FALSE(pq.try_pop().has_value());
+
+  // Queue should be empty after popping the only element
+  EXPECT_FALSE(pq.try_pop().has_value());
 }
 
 }  // namespace nyx::data_structure
