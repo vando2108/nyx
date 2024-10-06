@@ -2,8 +2,10 @@
 #define DATA_STRUCTURE_PRIORITY_QUEUE_HPP
 
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <list>
 #include <optional>
@@ -16,11 +18,18 @@
 namespace nyx::data_structure {
 template <typename T>
 class priority_queue {
+ public:
   typedef typename std::list<T>::iterator node_addr_t;
   typedef std::pair<uint8_t, node_addr_t> node_container_t;
+  typedef typename std::unordered_map<T, node_container_t> addr_map_t;
+  typedef typename addr_map_t::iterator addr_map_it_t;
 
-  std::unordered_map<T, node_container_t> addr_map_;
-  std::array<std::list<T>, common::define::size_type_bits> priorities_;
+ private:
+  const node_container_t empty_node_ = std::make_pair(-1, node_addr_t());
+  const addr_map_it_t empty_addr_map_it = addr_map_it_t();
+
+  addr_map_t addr_map_;
+  std::array<std::list<T>, common::define::sizeof_size_t> priorities_;
 
  public:
   std::size_t marker_;
@@ -34,32 +43,47 @@ class priority_queue {
   const T& top() const noexcept;
   void push_no_update(T&&, const uint8_t&) noexcept;
   void push_and_update(T&&, const uint8_t&) noexcept;
-  std::optional<T> try_pop() noexcept;
+  bool try_pop(T&) noexcept;
   void remove(const T&) noexcept;
   std::optional<uint8_t> get_priority(const T&) const noexcept;
   void clear() noexcept;
   size_t size() const noexcept;
+
+ private:
+  void push_and_update_internal_(T&&, const uint8_t&, addr_map_it_t&) noexcept;
 };
 
 template <typename T>
 bool priority_queue<T>::is_exsit(const T& value) const noexcept {
-  return addr_map_.find(value) != addr_map_.end();
+  auto it = addr_map_.find(value);
+  return it != addr_map_.end() && it->second != empty_node_;
 }
 
 template <typename T>
 void priority_queue<T>::push_no_update(T&& value, const uint8_t& priority) noexcept {
-  if (is_exsit(value)) {
+  assert(priority < common::define::sizeof_size_t);
+  auto it = addr_map_.find(value);
+  if (it != addr_map_.end() && it->second != empty_node_) {
     return;
   }
-  push_and_update(std::forward<T>(value), priority);
+  push_and_update_internal_(std::forward<T>(value), priority, it);
 }
 
 template <typename T>
 void priority_queue<T>::push_and_update(T&& value, const uint8_t& priority) noexcept {
-  auto it = addr_map_.find(value);
+  assert(priority < common::define::sizeof_size_t);
+  auto it = addr_map_it_t();
+  push_and_update_internal_(std::forward<T>(value), priority, it);
+}
+
+template <typename T>
+void priority_queue<T>::push_and_update_internal_(T&& value, const uint8_t& priority, addr_map_it_t& it) noexcept {
+  if (it == addr_map_it_t()) {
+    it = addr_map_.find(value);
+  }
 
   // Value already exsits
-  if (it != addr_map_.end()) {
+  if (it != addr_map_.end() && it->second != empty_node_) {
     node_container_t& nc = it->second;
     // Priority not changed
     if (nc.first == priority) {
@@ -86,34 +110,34 @@ void priority_queue<T>::push_and_update(T&& value, const uint8_t& priority) noex
   auto& prio_list = priorities_[priority];
 
   prio_list.push_back(std::forward<T>(value));
-  addr_map_.emplace(prio_list.back(), std::make_pair(priority, std::prev(prio_list.end())));
+  addr_map_[prio_list.back()] = std::make_pair(priority, std::prev(prio_list.end()));
 }
 
 template <typename T>
-std::optional<T> priority_queue<T>::try_pop() noexcept {
+bool priority_queue<T>::try_pop(T& out) noexcept {
   if (marker_ == 0) {
-    return std::nullopt;
+    return false;
   }
 
-  // const uint8_t higest_priority = utils::bitwise::lmb(marker_).value();
-  const uint8_t higest_priority = 0;
+  const int8_t higest_priority = 0;
+  // const int8_t higest_priority = utils::bitwise::lmb(marker_);
   auto& prio_list = priorities_[higest_priority];
-  T ret = prio_list.front();
+  out = prio_list.front();
   prio_list.pop_front();
 
-  // addr_map_.erase(ret);
+  // addr_map_[out] = empty_node_;
 
   if (prio_list.empty()) {
     utils::bitwise::turn_off_bit(marker_, higest_priority);
   }
 
-  return ret;
+  return true;
 }
 
 template <typename T>
 void priority_queue<T>::remove(const T& value) noexcept {
   auto it = addr_map_.find(value);
-  if (it == addr_map_.end()) {
+  if (it == addr_map_.end() || it->second == empty_node_) {
     return;
   }
 
@@ -126,13 +150,13 @@ void priority_queue<T>::remove(const T& value) noexcept {
     utils::bitwise::turn_off_bit(marker_, nc.first);
   }
 
-  addr_map_.erase(it);
+  addr_map_[it->first] = empty_node_;
 }
 
 template <typename T>
 std::optional<uint8_t> priority_queue<T>::get_priority(const T& value) const noexcept {
   auto it = addr_map_.find(value);
-  if (it == addr_map_.end()) {
+  if (it == addr_map_.end() || it->second == empty_node_) {
     return std::nullopt;
   }
 

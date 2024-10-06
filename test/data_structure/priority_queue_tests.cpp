@@ -8,13 +8,9 @@ class PriorityQueueTest : public ::testing::Test {
  protected:
   priority_queue<int> pq;
 
-  void SetUp() override {
-    // Optionally initialize the priority queue here
-  }
+  void SetUp() override {}
 
-  void TearDown() override {
-    // Optionally clear up resources after each test
-  }
+  void TearDown() override { pq.clear(); }
 };
 
 TEST_F(PriorityQueueTest, IsExistReturnsFalseForNonExistentElement) {
@@ -27,8 +23,9 @@ TEST_F(PriorityQueueTest, PushNoUpdateAddsElementWithCorrectPriority) {
   uint8_t priority = 3;
 
   pq.push_no_update(std::move(element), priority);
-  EXPECT_TRUE(pq.is_exsit(5));
-  EXPECT_EQ(pq.get_priority(5), priority);
+  EXPECT_TRUE(pq.is_exsit(5)) << "Pushed element not exits in pq";
+  EXPECT_NE(pq.marker_, 0) << "Marker is eq 0";
+  EXPECT_EQ(pq.get_priority(5), priority) << pq.get_priority(5).has_value();
 }
 
 TEST_F(PriorityQueueTest, PushAndUpdateUpdatesPriorityOfExistingElement) {
@@ -48,9 +45,9 @@ TEST_F(PriorityQueueTest, TryPopReturnsElementWithHighestPriority) {
   pq.push_no_update(std::move(element1), 1);
   pq.push_no_update(std::move(element2), 3);
 
-  auto popped = pq.try_pop();
-  ASSERT_TRUE(popped.has_value());
-  EXPECT_EQ(popped.value(), 2);  // Element with higher priority should pop first
+  int popped;
+  ASSERT_TRUE(pq.try_pop(popped));
+  EXPECT_EQ(popped, 2);  // Element with higher priority should pop first
 }
 
 TEST_F(PriorityQueueTest, RemoveDeletesElementCorrectly) {
@@ -72,12 +69,12 @@ TEST_F(PriorityQueueTest, SingleElementPushPop) {
   int element = 15;
   pq.push_no_update(std::move(element), 5);
 
-  auto popped = pq.try_pop();
-  ASSERT_TRUE(popped.has_value());
-  EXPECT_EQ(popped.value(), 15);
+  int popped;
+  ASSERT_TRUE(pq.try_pop(popped));
+  EXPECT_EQ(popped, 15);
 
   // Ensure the queue is empty after pop
-  EXPECT_FALSE(pq.try_pop().has_value());
+  EXPECT_FALSE(pq.try_pop(popped));
 }
 
 // Test pushing elements with the same priority
@@ -86,22 +83,22 @@ TEST_F(PriorityQueueTest, SamePriorityElements) {
   pq.push_no_update(std::move(element1), 4);
   pq.push_no_update(std::move(element2), 4);
 
-  auto popped1 = pq.try_pop();
-  ASSERT_TRUE(popped1.has_value());
-  EXPECT_TRUE(popped1.value() == 10 || popped1.value() == 20);  // Any order is allowed
+  int popped1;
+  ASSERT_TRUE(pq.try_pop(popped1));
+  EXPECT_TRUE(popped1 == 10);  // Any order is allowed
 
-  auto popped2 = pq.try_pop();
-  ASSERT_TRUE(popped2.has_value());
-  EXPECT_NE(popped1.value(), popped2.value());  // Both should be different elements
+  int popped2;
+  ASSERT_TRUE(pq.try_pop(popped2));
+  EXPECT_NE(popped1, popped2);  // Both should be different elements
 
   // Ensure the queue is empty
-  EXPECT_FALSE(pq.try_pop().has_value());
+  EXPECT_FALSE(pq.try_pop(popped1));
 }
 
 // Test popping from an empty queue
 TEST_F(PriorityQueueTest, PopFromEmptyQueueReturnsNone) {
-  auto popped = pq.try_pop();
-  EXPECT_FALSE(popped.has_value());
+  int popped;
+  EXPECT_FALSE(pq.try_pop(popped));
 }
 
 // Test removing an element that does not exist
@@ -117,13 +114,12 @@ TEST_F(PriorityQueueTest, PriorityBoundaryValues) {
   pq.push_no_update(std::move(element1), 0);   // Minimum priority
   pq.push_no_update(std::move(element2), 63);  // Maximum priority
 
-  auto popped = pq.try_pop();
-  ASSERT_TRUE(popped.has_value());
-  EXPECT_EQ(popped.value(), 2);  // Max priority element should pop first
+  int popped;
+  ASSERT_TRUE(pq.try_pop(popped));
+  EXPECT_EQ(popped, 2);  // Max priority element should pop first
 
-  popped = pq.try_pop();
-  ASSERT_TRUE(popped.has_value());
-  EXPECT_EQ(popped.value(), 1);  // Then min priority element
+  ASSERT_TRUE(pq.try_pop(popped));
+  EXPECT_EQ(popped, 1);  // Then min priority element
 }
 
 // Test updating priority for a non-existent element
@@ -148,16 +144,16 @@ TEST_F(PriorityQueueTest, AddRemoveMultipleElements) {
   EXPECT_FALSE(pq.is_exsit(6));
 
   // Pop the remaining elements and check if they're in the correct order
-  auto popped1 = pq.try_pop();
-  ASSERT_TRUE(popped1.has_value());
-  EXPECT_EQ(popped1.value(), 3);
+  int popped1;
+  ASSERT_TRUE(pq.try_pop(popped1));
+  EXPECT_EQ(popped1, 3);
 
-  auto popped2 = pq.try_pop();
-  ASSERT_TRUE(popped2.has_value());
-  EXPECT_EQ(popped2.value(), 9);
+  int popped2;
+  ASSERT_TRUE(pq.try_pop(popped2));
+  EXPECT_EQ(popped2, 9);
 
   // Queue should be empty
-  EXPECT_FALSE(pq.try_pop().has_value());
+  EXPECT_FALSE(pq.try_pop(popped1));
 }
 
 // Test duplicate elements handling
@@ -172,12 +168,12 @@ TEST_F(PriorityQueueTest, DuplicateElements) {
   EXPECT_EQ(pq.get_priority(5), 4);
 
   // Pop it and check if it's the correct element
-  auto popped = pq.try_pop();
-  ASSERT_TRUE(popped.has_value());
-  EXPECT_EQ(popped.value(), 5);
+  int popped;
+  ASSERT_TRUE(pq.try_pop(popped));
+  EXPECT_EQ(popped, 5);
 
   // Queue should be empty after popping the only element
-  EXPECT_FALSE(pq.try_pop().has_value());
+  EXPECT_FALSE(pq.try_pop(popped));
 }
 
 }  // namespace nyx::data_structure

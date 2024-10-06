@@ -37,13 +37,27 @@ int main(int argc, char* argv[]) {
   // Set log info to console
   FLAGS_alsologtostderr = 1;
 
-  nyx::data_structure::priority_queue<int> pq;
-  int x = 10;
-  pq.push_and_update(std::move(x), 10);
-  x = 10;
-  pq.push_and_update(std::move(x), 9);
-  auto popped = pq.try_pop();
-  LOG(INFO) << static_cast<int>(popped.value());
+  // nyx::data_structure::priority_queue<int> pq;
+  // int x = 10;
+  // pq.push_no_update(std::move(x), 10);
+  // x = 10;
+
+  std::priority_queue<std::string> pq;
+
+  // Push some strings into the priority queue
+  pq.push("apple");
+  pq.push("orange");
+  pq.push("banana");
+  pq.push("grape");
+
+  // Priority queue will return elements in descending lexicographical order
+  while (!pq.empty()) {
+    std::cout << pq.top() << std::endl;  // Print the top element
+    pq.pop();                            // Remove the top element
+  }
+  // pq.push_and_update(std::move(x), 9);
+  // auto popped = pq.try_pop();
+  // LOG(INFO) << static_cast<int>(popped.value());
 
   // nyx::socket::ServerStream server = nyx::socket::ServerStream("127.0.0.1", 3000);
   // server.start();

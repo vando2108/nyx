@@ -17,7 +17,7 @@ constexpr std::size_t hardware_destructive_interference_size = 64;
 
 constexpr std::size_t kPaddingSize = hardware_constructive_interference_size - sizeof(std::size_t);
 
-constexpr std::uint8_t size_type_bits = sizeof(std::size_t) * CHAR_BIT;
+constexpr std::uint8_t sizeof_size_t = sizeof(std::size_t) * CHAR_BIT;
 }  // namespace nyx::common::define
 
 #endif  // !nyx_COMMON_DEFINE_HPP
