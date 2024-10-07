@@ -1,7 +1,8 @@
 # Makefile to build Bazel project, generate compile_commands.json, and run unit tests
 
 # Default Bazel build options
-BUILD_OPTS = --cxxopt=-std=c++20
+BUILD_OPTS = --cxxopt=-std=c++20 --compilation_mode=opt
+ASAN_OPTS = $(BUILD_OPTS) --config asan
 TESTS_OPTS = --cxxopt=-std=c++20 --test_output=streamed --color=yes
 
 # The target to build (can be overridden from the command line)
@@ -11,10 +12,20 @@ TESTS_OPTS = --cxxopt=-std=c++20 --test_output=streamed --color=yes
 .PHONY: all
 all: build
 
+# Run rule
+.PHONY: run
+run:
+	bazel run $(BUILD_OPTS) $(TARGET)
+
 # Build rule
 .PHONY: build
 build:
 	bazel build $(BUILD_OPTS) $(TARGET)
+
+# Build rule
+.PHONY: build_asan
+build_asan:
+	bazel build $(ASAN_OPTS) $(TARGET)
 
 # Build tags
 .PHONY: build_tags

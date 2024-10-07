@@ -1,7 +1,7 @@
 #include "include/bitwise.hpp"
 
 namespace nyx::utils::bitwise {
-int clz(size_t x) noexcept {
+int clz(std::size_t x) noexcept {
   // clang-format off
   size_t y;
   int n = 64;
@@ -16,7 +16,14 @@ int clz(size_t x) noexcept {
   return n - x;
 }
 
-int ctz(size_t x) noexcept {
+unsigned clz(std::uint8_t x) {
+  static constexpr std::uint8_t clz_lookup[16] = {4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+  auto upper = x >> 4;
+  auto lower = x & 0x0F;
+  return upper ? clz_lookup[upper] : 4 + clz_lookup[lower];
+}
+
+int ctz(std::size_t x) noexcept {
   if (x == 0) {
     return 64;
   }
@@ -33,13 +40,17 @@ int ctz(size_t x) noexcept {
   return n - 1;
 }
 
-std::optional<int> lmb(size_t x) noexcept {
+int lmb(const std::size_t& x) noexcept {
   if (x == 0) {
-    return std::nullopt;
+    return -1;
   }
 
-  return 64 - clz(x);
+  return 64 - clz(x) - 1;
 }
 
-bool is_power_of_two(size_t x) noexcept { return (x & (x - 1)) == 0; }
+bool is_power_of_two(const std::size_t& x) noexcept { return x > 0 && (x & (x - 1)) == 0; }
+
+void turn_on_bit(std::size_t& x, const uint8_t& pos) noexcept { x |= 1LL << pos; }
+
+void turn_off_bit(std::size_t& x, const uint8_t& pos) noexcept { x &= ~(1LL << pos); }
 }  // namespace nyx::utils::bitwise

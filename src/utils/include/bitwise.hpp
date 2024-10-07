@@ -2,13 +2,16 @@
 #define UTILS_BITWISE_HPP
 
 #include <cstddef>
-#include <optional>
+#include <cstdint>
 
 namespace nyx::utils::bitwise {
-int clz(size_t x) noexcept;
-int ctz(size_t x) noexcept;
-std::optional<int> lmb(size_t) noexcept;
-bool is_power_of_two(size_t) noexcept;
+int clz(std::size_t x) noexcept;
+int ctz(std::size_t x) noexcept;
+int lmb(const std::size_t&) noexcept;
+bool is_power_of_two(const std::size_t&) noexcept;
+void turn_on_bit(std::size_t&, const uint8_t&) noexcept;
+void turn_off_bit(std::size_t&, const uint8_t&) noexcept;
+unsigned clz(std::uint8_t x);
 }  // namespace nyx::utils::bitwise
 
 #endif  // !UTILS_BITWISE_HPP

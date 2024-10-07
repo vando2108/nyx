@@ -1,4 +1,4 @@
-// #include <glog/logging.h>
+#include <glog/logging.h>
 #include <netinet/in.h>
 #include <sys/_endian.h>
 #include <sys/socket.h>
@@ -13,7 +13,7 @@
 #include <thread>
 #include <utility>
 
-#include "src/data_structure/unique_list.hpp"
+#include "src/data_structure/priority_queue.hpp"
 
 // #include "data_structure/stealing_work_queue.hpp"
 // #include "http/http_server.hpp"
@@ -32,10 +32,32 @@ bool lock_key;
 // }
 
 int main(int argc, char* argv[]) {
-  // google::InitGoogleLogging(argv[0]);
+  google::InitGoogleLogging(argv[0]);
 
   // Set log info to console
-  // FLAGS_alsologtostderr = 1;
+  FLAGS_alsologtostderr = 1;
+
+  // nyx::data_structure::priority_queue<int> pq;
+  // int x = 10;
+  // pq.push_no_update(std::move(x), 10);
+  // x = 10;
+
+  std::priority_queue<std::string> pq;
+
+  // Push some strings into the priority queue
+  pq.push("apple");
+  pq.push("orange");
+  pq.push("banana");
+  pq.push("grape");
+
+  // Priority queue will return elements in descending lexicographical order
+  while (!pq.empty()) {
+    std::cout << pq.top() << std::endl;  // Print the top element
+    pq.pop();                            // Remove the top element
+  }
+  // pq.push_and_update(std::move(x), 9);
+  // auto popped = pq.try_pop();
+  // LOG(INFO) << static_cast<int>(popped.value());
 
   // nyx::socket::ServerStream server = nyx::socket::ServerStream("127.0.0.1", 3000);
   // server.start();
