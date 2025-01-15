@@ -42,20 +42,15 @@ int main(int argc, char* argv[]) {
   // Set log info to console
   FLAGS_alsologtostderr = 1;
 
-  nyx::data_structure::unordered_map<size_t, int> map;
-  LOG(INFO) << map.bucket_count();
-  LOG(INFO) << "test: " << map.insert(0, 1)->second;
-  // map.buckets();
-  LOG(INFO) << map.insert(2, 3)->second;
-  // map.buckets();
-  LOG(INFO) << map.find(2)->second << '\n';
+  nyx::data_structure::unordered_map<size_t, std::string> map;
+  int key = 20;
+  std::string initial_value = "initial";
+  std::string updated_value = "updated";
 
-  map.erase(2);
-  map[0] = 8;
-  LOG(INFO) << map.find(0)->second;
-
-  std::unordered_map<int, int> test;
-  test.erase(1);
+  map.insert(key, initial_value);
+  map.buckets();
+  map.insert(key, updated_value);
+  // map.buckets();
 
   // map.buckets();
 

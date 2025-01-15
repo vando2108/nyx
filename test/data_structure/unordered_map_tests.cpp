@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <gtest/gtest.h>
 
 #include "src/data_structure/unordered_map.hpp"
@@ -63,6 +64,8 @@ TEST_F(UnorderedMapTest, InsertAndUpdateElement) {
   int key = 20;
   std::string initial_value = "initial";
   std::string updated_value = "updated";
+
+  map.bucket_count();
 
   map.insert(key, initial_value);
   EXPECT_EQ(map[key], initial_value) << "Initial value should be inserted";
