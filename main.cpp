@@ -5,31 +5,9 @@
 #include <unistd.h>
 
 #include <cassert>
-#include <condition_variable>
 #include <cstring>
-#include <future>
-#include <mutex>
-#include <queue>
-#include <thread>
-#include <utility>
 
-#include "src/data_structure/priority_queue.hpp"
-
-// #include "data_structure/stealing_work_queue.hpp"
-// #include "http/http_server.hpp"
-// #include "socket/stream.hpp"
-// #include "threadpool/base.hpp"
-// #include "threadpool/stealing_threadpool.hpp"
-
-std::mutex mutex;
-std::condition_variable condition_variable;
-bool lock_key;
-
-// void thread(int id) {
-//   std::unique_lock<std::mutex> lock{mutex};
-//   condition_variable.wait(lock, [&] { return lock_key; });
-//   LOG(INFO) << "thread " << id << " finish running";
-// }
+#include "src/data_structure/concurrent_queue.hpp"
 
 int main(int argc, char* argv[]) {
   google::InitGoogleLogging(argv[0]);
@@ -42,19 +20,17 @@ int main(int argc, char* argv[]) {
   // pq.push_no_update(std::move(x), 10);
   // x = 10;
 
-  std::priority_queue<std::string> pq;
-
-  // Push some strings into the priority queue
-  pq.push("apple");
-  pq.push("orange");
-  pq.push("banana");
-  pq.push("grape");
-
-  // Priority queue will return elements in descending lexicographical order
-  while (!pq.empty()) {
-    std::cout << pq.top() << std::endl;  // Print the top element
-    pq.pop();                            // Remove the top element
+  nyx::data_structure::ConcurrentQueue<int> queue;
+  for (int i = 0; i < 10; ++i) {
+    queue.try_push(i);
+    LOG(INFO) << "pushed: " << i << '\n';
   }
+
+  int temp;
+  while (queue.try_pop(temp)) {
+    LOG(INFO) << "poped value: " << temp;
+  }
+
   // pq.push_and_update(std::move(x), 9);
   // auto popped = pq.try_pop();
   // LOG(INFO) << static_cast<int>(popped.value());

@@ -8,3 +8,12 @@ cc_library (
   deps = ["//src/data_structure:data_structure", "@com_github_google_glog//:glog"],
   visibility = ["//visibility:public"],
 )
+
+cc_library (
+  name = "stealing_threadpool",
+  srcs = glob(["stealing_threadpool/*.cpp"]),
+  hdrs = glob(["include/*.hpp"]),
+  tags = create_tags(),
+  deps = ["//src/data_structure:data_structure", "@com_github_google_glog//:glog"],
+  visibility = ["//visibility:public"],
+)

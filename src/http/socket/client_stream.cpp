@@ -1,7 +1,7 @@
 #include <glog/logging.h>
 #include <sys/socket.h>
 
-#include "src/socket/include/stream.hpp"
+#include "src/http/socket/include/stream.hpp"
 
 namespace nyx {
 namespace socket {

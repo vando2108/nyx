@@ -1,4 +1,4 @@
-#include "threadpool/stealing_threadpool.hpp"
+#include "src/http/threadpool/include/stealing_threadpool.hpp"
 
 namespace nyx {
 namespace threadpool {

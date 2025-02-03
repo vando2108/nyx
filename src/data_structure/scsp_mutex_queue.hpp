@@ -16,7 +16,6 @@ class ScspMutexQueue : private Alloc {
   mutable std::mutex mutex_;
 
  public:
- public:
   explicit ScspMutexQueue(size_t capacity, Alloc const& alloc = Alloc{})
       : Alloc{alloc}, capacity_{capacity}, ring_{std::allocator_traits<Alloc>::allocate(*this, capacity)} {}
 

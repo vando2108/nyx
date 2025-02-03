@@ -6,7 +6,7 @@
 #include <mutex>
 #include <string_view>
 
-#include "src/event/include/event.hpp"
+#include "src/http/event/include/event.hpp"
 
 namespace nyx {
 namespace socket {

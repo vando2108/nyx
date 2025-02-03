@@ -5,8 +5,8 @@
 
 #include <cerrno>
 
-#include "src/socket/include/helper.hpp"
-#include "src/socket/include/stream.hpp"
+#include "src/http/socket/include/helper.hpp"
+#include "src/http/socket/include/stream.hpp"
 
 namespace nyx {
 namespace socket {

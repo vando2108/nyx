@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 
 #include "src/utils/include/bitwise.hpp"
@@ -12,31 +13,31 @@ using namespace nyx::utils::bitwise;
 // Test suite for CountingLeadingZero function
 TEST(BitwiseTest, CountingLeadingZero) {
   // Test case 1: Zero Input
-  EXPECT_EQ(clz(0), 64) << "Failed for input: 0. Expected 64 (all bits are zeros).";
+  EXPECT_EQ(clz(uint8_t(0)), 64) << "Failed for input: 0. Expected 64 (all bits are zeros).";
 
   // Test case 2: Single Bit Set (powers of two)
-  EXPECT_EQ(clz(1), 63) << "Failed for input: 1. Expected 63 (one bit set at position 0).";
-  EXPECT_EQ(clz(2), 62) << "Failed for input: 2. Expected 62 (one bit set at position 1).";
-  EXPECT_EQ(clz(4), 61) << "Failed for input: 4. Expected 61 (one bit set at position 2).";
-  EXPECT_EQ(clz(8), 60) << "Failed for input: 8. Expected 60 (one bit set at position 3).";
-  EXPECT_EQ(clz(16), 59) << "Failed for input: 16. Expected 59 (one bit set at position 4).";
-  EXPECT_EQ(clz(32), 58) << "Failed for input: 32. Expected 58 (one bit set at position 5).";
+  EXPECT_EQ(clz(uint8_t(1)), 63) << "Failed for input: 1. Expected 63 (one bit set at position 0).";
+  EXPECT_EQ(clz(uint8_t(2)), 62) << "Failed for input: 2. Expected 62 (one bit set at position 1).";
+  EXPECT_EQ(clz(uint8_t(4)), 61) << "Failed for input: 4. Expected 61 (one bit set at position 2).";
+  EXPECT_EQ(clz(uint8_t(8)), 60) << "Failed for input: 8. Expected 60 (one bit set at position 3).";
+  EXPECT_EQ(clz(uint8_t(16)), 59) << "Failed for input: 16. Expected 59 (one bit set at position 4).";
+  EXPECT_EQ(clz(uint8_t(32)), 58) << "Failed for input: 32. Expected 58 (one bit set at position 5).";
 
   // Test case 3: All bits set (`~0` or std::numeric_limits<std::size_t>::max())
   EXPECT_EQ(clz(std::numeric_limits<std::size_t>::max()), 0) << "Failed for input: maximum std::size_t value. Expected 0 (no leading zeros).";
 
   // Test case 4: Mixed bits (non-zero non-power-of-two values)
-  EXPECT_EQ(clz(3), 62) << "Failed for input: 3 (0b11). Expected 62 (62 leading zeros).";
-  EXPECT_EQ(clz(5), 61) << "Failed for input: 5 (0b101). Expected 61 (61 leading zeros).";
-  EXPECT_EQ(clz(6), 61) << "Failed for input: 6 (0b110). Expected 61 (61 leading zeros).";
-  EXPECT_EQ(clz(10), 60) << "Failed for input: 10 (0b1010). Expected 60 (60 leading zeros).";
-  EXPECT_EQ(clz(12), 60) << "Failed for input: 12 (0b1100). Expected 60 (60 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(3)), 62) << "Failed for input: 3 (0b11). Expected 62 (62 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(5)), 61) << "Failed for input: 5 (0b101). Expected 61 (61 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(6)), 61) << "Failed for input: 6 (0b110). Expected 61 (61 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(10)), 60) << "Failed for input: 10 (0b1010). Expected 60 (60 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(12)), 60) << "Failed for input: 12 (0b1100). Expected 60 (60 leading zeros).";
 
   // Additional test cases
-  EXPECT_EQ(clz(7), 61) << "Failed for input: 7 (0b111). Expected 61 (61 leading zeros).";
-  EXPECT_EQ(clz(24), 59) << "Failed for input: 24 (0b11000). Expected 59 (59 leading zeros).";
-  EXPECT_EQ(clz(40), 58) << "Failed for input: 40 (0b101000). Expected 58 (58 leading zeros).";
-  EXPECT_EQ(clz(64), 57) << "Failed for input: 64 (0b1000000). Expected 57 (57 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(7)), 61) << "Failed for input: 7 (0b111). Expected 61 (61 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(24)), 59) << "Failed for input: 24 (0b11000). Expected 59 (59 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(40)), 58) << "Failed for input: 40 (0b101000). Expected 58 (58 leading zeros).";
+  EXPECT_EQ(clz(uint8_t(64)), 57) << "Failed for input: 64 (0b1000000). Expected 57 (57 leading zeros).";
 
   for (int i = 0; i < 64; ++i) {
     std::size_t mask = 1LL << i;
@@ -82,7 +83,7 @@ TEST(BitwiseTest, CountingTrailingZero) {
 // Test suite for LeftMostBit function
 TEST(BitwiseTest, LeftMostBit) {
   // Test case 1: Zero Input
-  EXPECT_EQ(lmb(0), std::nullopt) << "Failed for input: 0. Expected std::nullopt (no bits set).";
+  EXPECT_EQ(lmb(0), -1) << "Failed for input: 0. Expected std::nullopt (no bits set).";
 
   // Test case 2: Single Bit Set (powers of two)
   EXPECT_EQ(lmb(1), 0) << "Failed for input: 1. Expected 1 (leftmost bit at position 0 is set).";

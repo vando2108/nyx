@@ -39,7 +39,7 @@ class ICentralizedThreadpool : public IThreadpool, public std::enable_shared_fro
    *
    * @param config Configuration settings for the threadpool.
    */
-  ICentralizedThreadpool(Config&& config) : task_queue_(config.task_queue_cap), IThreadpool(std::forward<Config>(config)) {}
+  ICentralizedThreadpool(Config&& config) : IThreadpool(std::forward<Config>(config)), task_queue_(config.task_queue_cap) {}
 };
 
 /**
