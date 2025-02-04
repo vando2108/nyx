@@ -22,8 +22,10 @@ namespace data_structure {
 template <typename T, typename Alloc = std::allocator<T>>
 class ConcurrentQueue {
  private:
-  CircularArray<T, Alloc> array_;  ///< The underlying circular array for storage.
-  mutable std::mutex mutex_;       ///< Mutex for ensuring thread safety.
+  CircularArray<T, Alloc> array_;      ///< The underlying circular array for storage.
+  mutable std::mutex mutex_;           ///< Mutex for ensuring thread safety.
+  std::condition_variable not_empty_;  ///< condition_variable to check if the queue is empty
+  bool stop_requested = false;
 
  public:
   /**
@@ -54,6 +56,8 @@ class ConcurrentQueue {
   void push(T&& value) {
     std::unique_lock<std::mutex> lock(mutex_);
     array_.push_back(std::forward<T>(value));
+
+    not_empty_.notify_one();
   }
 
   /**
@@ -64,6 +68,26 @@ class ConcurrentQueue {
   void push(const T& value) {
     std::unique_lock<std::mutex> lock(mutex_);
     array_.push_back(value);
+
+    not_empty_.notify_one();
+  }
+
+  /**
+   * @brief Pop an element from the front of the queue (block if the queue is empty).
+   * The watting process can be cancled by calling the request_stop()
+   *
+   * @return Value of popped element
+   */
+  bool pop(T& value) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    not_empty_.wait(lock, [this]() { return !array_.empty() || stop_requested; });
+
+    if (stop_requested) {
+      return false;
+    }
+
+    array_.pop_front(value);
+    return true;
   }
 
   /**
@@ -75,6 +99,11 @@ class ConcurrentQueue {
   bool try_pop(T& value) {
     std::unique_lock<std::mutex> lock(mutex_);
     return array_.pop_front(value);
+  }
+
+  void request_stop() {
+    std::unique_lock<std::mutex> lock(mutex_);
+    stop_requested = true;
   }
 
   /**
